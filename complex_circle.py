@@ -7,11 +7,15 @@ CENTER = WINDOW_SIZE // 2
 RADIUS = 230
 POINT_COLOR = (214, 87, 70)
 LINE_COLOR = (242, 172, 50)
+CENTER_CONNECTION_COLOR = (103, 219, 197)
 BACKGROUND_COLOR = (96, 96, 96)
 CIRCLE_COLOR = (0, 0, 0)
 FPS = 120
 FONT_SIZE = 36
 SPEED = 50 / FPS
+START_ANGLE = 0.5
+START_POINTS = 1
+POINT_INCREMENT_ANGLE = 5
 
 def draw(window, start_angle, points, radius):
     angles = [round(start_angle + i * 360 / points, 1) for i in range(points)]
@@ -32,9 +36,10 @@ def draw(window, start_angle, points, radius):
 
         if i != 0:
             pygame.draw.line(window, LINE_COLOR, (x, y), previous)
+            pygame.draw.line(window, CENTER_CONNECTION_COLOR, (x, y), (CENTER, CENTER))
         else:
             first = (x, y)
-            pygame.draw.line(window, LINE_COLOR, (x, y), (CENTER, CENTER))
+            pygame.draw.line(window, CENTER_CONNECTION_COLOR, (x, y), (CENTER, CENTER))
 
         if i == len(angles) - 1:
             pygame.draw.line(window, LINE_COLOR, (x, y), first)
@@ -49,17 +54,15 @@ pygame.display.update()
 running = True
 clock = pygame.time.Clock()
 
-angle = 0.5
-points = 1
-
 font = pygame.font.SysFont(None, FONT_SIZE)
 
 while running:
     clock.tick(FPS)
-    angle += SPEED
+    START_ANGLE += SPEED
 
-    if abs(angle % 90) < SPEED:
-        points += 1
+
+    if abs(START_ANGLE % POINT_INCREMENT_ANGLE) < SPEED:
+        START_POINTS += 1
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -71,8 +74,8 @@ while running:
     pygame.draw.line(window, CIRCLE_COLOR, (0, CENTER), (WINDOW_SIZE, CENTER))
     pygame.draw.line(window, CIRCLE_COLOR, (CENTER, 0), (CENTER, WINDOW_SIZE))
 
-    draw(window, angle, points, RADIUS)
-    points_text = font.render(f"Points: {points}", True, (255, 255, 255))
+    draw(window, START_ANGLE, START_POINTS, RADIUS)
+    points_text = font.render(f"Points: {START_POINTS}", True, (255, 255, 255))
     window.blit(points_text, (10, 10))
     pygame.display.flip()
 
